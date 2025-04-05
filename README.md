@@ -1,19 +1,23 @@
 # Jetson Nano with current llama.cpp and CUDA support
 
+![GitHub Release](https://img.shields.io/github/v/release/kreier/llama.cpp-jetson)
+![GitHub License](https://img.shields.io/github/license/kreier/llama.cpp-jetson)
+[![pages-build-deployment](https://github.com/kreier/llama.cpp-jetson/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/kreier/llama.cpp-jetson/actions/workflows/pages/pages-build-deployment)
+
 It is possible to compile a recent llama.cpp with `gcc 8.5` and `nvcc 10.2` (latest supported CUDA compiler from Nvidia for the 2019 Jetson Nano) that also supports the use of the GPU.
 
-- [Prerequisites](https://gist.github.com/kreier/6871691130ec3ab907dd2815f9313c5d#prerequisites)
-- [Procedure](https://gist.github.com/kreier/6871691130ec3ab907dd2815f9313c5d#procedure) - 5 minutes, plus 85 minutes for the compilation in the last step
-- [Benchmark](https://gist.github.com/kreier/6871691130ec3ab907dd2815f9313c5d#benchmark)
-- [Compile llama.cpp for CPU mode](https://gist.github.com/kreier/6871691130ec3ab907dd2815f9313c5d#compile-llamacpp-for-cpu-mode) - 24 minutes
-- [Install prerequisites](https://gist.github.com/kreier/6871691130ec3ab907dd2815f9313c5d#install-prerequisites)
-- [Choosing the right compiler](https://gist.github.com/kreier/6871691130ec3ab907dd2815f9313c5d#choosing-the-right-compiler)
-- [History](https://gist.github.com/kreier/6871691130ec3ab907dd2815f9313c5d#history)
-- [Sources](https://gist.github.com/kreier/6871691130ec3ab907dd2815f9313c5d#sources)
+- [Prerequisites](#prerequisites)
+- [Procedure](#procedure) - 5 minutes, plus 85 minutes for the compilation in the last step
+- [Benchmark](#benchmark)
+- [Compile llama.cpp for CPU mode](#compile-llamacpp-for-cpu-mode) - 24 minutes
+- [Install prerequisites](#install-prerequisites)
+- [Choosing the right compiler](d#choosing-the-right-compiler)
+- [History](#history)
+- [Sources](d#sources)
 
 And the Jetson Nano indeed (footnote 1) uses its GPU to generate tokens with 100% and 4 Watt, while the CPU is only used in the 10% range with 0.7 Watt. It is on average **20% faster** than the pure CPU use with ollama or a CPU build - see the benchmark section below!
 
-<img src="https://raw.githubusercontent.com/kreier/jetson/main/llama.cpp/1x1.png" width="15%"><img src="https://raw.githubusercontent.com/kreier/jetson/main/llama.cpp/llama5038gpu.png" width="70%">
+<img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="15%"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/llama5038gpu.png" width="70%">
 
 ## Prerequisites
 
@@ -184,7 +188,7 @@ cmake --build build --config Release
 
 Successfully compiled! 
 
-![output compiling](https://raw.githubusercontent.com/kreier/jetson/main/llama.cpp/compile5050.png)
+![output compiling](https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/compile5050.png)
 
 After that you can start your conversation with Gemma3 about finer details of our universe:
 
@@ -192,7 +196,7 @@ After that you can start your conversation with Gemma3 about finer details of ou
 ./build/bin/llama-cli -hf ggml-org/gemma-3-1b-it-GGUF -p "Explain quantum entanglement" --n-gpu-layers 99
 ```
 
-![llama.cpp 5043 GPU](https://raw.githubusercontent.com/kreier/jetson/main/llama.cpp/llama5043gpu.png)
+![llama.cpp 5043 GPU](https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/llama5043gpu.png)
 
 The answers vary, sometimes it throws in a video from Veritasium. And it could easily *"Write a 1000 word essay about the French Revolution"* with $pp = 21 \frac{token}{s}$ and $tg = 5.13 \frac{token}{s}$. Impressive! 
 
@@ -232,7 +236,7 @@ build: c262bedd (5043)
 
 The prompt processing speed seems to be too high in this benchmark for the small models run on the Jetson Nano. To have a more realistic comparison for the graph below the `llama-cli` was used to determine both the pp and tg metrics. Similar results were achieved with longer prompts like "Write a 1000 word essay about the French Revolution".
 
-![TinyLlama](https://raw.githubusercontent.com/kreier/jetson/main/llama.cpp/TinyLlama.png)
+![TinyLlama](https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/TinyLlama.png)
 
 **Explanation**: Earlier editions of llama.cpp like b1618 from December 2023 or b4400 from December 2024 got faster in all their metrics with improvements to their code. The native speed of a CPU compile from April 2025 (b5036) has the same speed (within error) as a CPU build from ollama 0.6.4 from the same time for both pp and tg.
 
@@ -270,7 +274,7 @@ ggml_cuda_init: found 1 CUDA devices:
 build: 193c3e03 (5038)
 ```
 
-<img src="https://raw.githubusercontent.com/kreier/jetson/main/llama.cpp/1x1.png" width="25%"><img src="https://raw.githubusercontent.com/kreier/jetson/main/llama.cpp/gemma3.png" width="50%">
+<img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="25%"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/gemma3.png" width="50%">
 
 While a compiled CPU version of llama.cpp is comparable in speed with a recent ollama version, so might a GPU version be slower when not offloading layers to the GPU, but be **20% faster** if the model is offloaded to the GPU!
 
