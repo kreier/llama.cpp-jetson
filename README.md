@@ -244,6 +244,7 @@ The main metric to compare here is the **token generation**. Initial versions wi
 
 As expected, the prompt processing is even further accelerated, since it is very compute intensive. But it only contributes to a small time amount of the final answer. *Another observation:* A GPU optimized version is significantly slower than a CPU optimized version for the Jetson with the shared memory architecture when not all layers are offloaded to the GPU.
 
+
 ### Gemma3:1b 2025-03-12
 
 This much more recent [model from March 2025](https://huggingface.co/ggml-org/gemma-3-1b-it-GGUF?local-app=llama.cpp) is slightly larger with 806 MB but much more capable than TinyLlama, and comparable in speed. The prompt is "Explain quantum entanglement"
@@ -278,6 +279,40 @@ build: 193c3e03 (5038)
 
 While a compiled CPU version of llama.cpp is comparable in speed with a recent ollama version, so might a GPU version be slower when not offloading layers to the GPU, but be **20% faster** if the model is offloaded to the GPU!
 
+
+### Applications for Gemma 3 1b
+
+One might wonder if there are some applications for this small 1 billion parameter model that runs on the Jetson with GPU acceleration. Here are a few I found:
+
+- [Fix broken JSON from user gracefully for better UX](https://www.reddit.com/r/LocalLLaMA/comments/1jcmyuc/comment/mkrgch7/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button) on reddit, prompt is "Fix syntax issue in this <JSON> and respond with corrected JSON but not anything else", The output is a plane JSON and I can take it back to .NET
+- [Fine-Tuning Gemma 3 1B-IT for Financial Sentiment Analysis: A Step-by-Step Guide](https://medium.com/@lucamassaron/fine-tuning-gemma-3-1b-it-for-financial-sentiment-analysis-a-step-by-step-guide-1a025d2fc75d) by [Luca Massaron](https://medium.com/@lucamassaron), 2025-03-26 on medium.com
+
+
+
+### Gemma 3 4b
+
+One might think that a quantized version of Gemma 3 with 4 billion parameters might work with the 4 GB RAM of the Jetson Nano. And to a degree it does, but not in a usable way. One advantage of the 4B model is its multimodality, so it could also be used for images. It would be slow, but there might be usecases where the Jetson would just crunch images and data in solitude, and we would return next day to examine the results. Well, here is my take on it:
+
+I tried 4 quantization levels, Q2, Q3, Q4 and the original file from Google. Here are the sizes of the files and the used memory with ollama 0.6.4 (April 2025) on Jetson, x86_64 CPU and Nvidia GPU:
+
+|                  model                  | file [GB] | Jetson | CPU | GPU |
+|:---------------------------------------:|:---------:|:------:|:---:|:---:|
+| gemma3:1b                               |   0.815   |   1.9  | 1.5 | 1.9 |
+| hf.co/unsloth/gemma-3-4b-it-GGUF:Q2_K   |    1.7    |   1.9  | 3.9 | 4.4 |
+| hf.co/unsloth/gemma-3-4b-it-GGUF:Q3_K_M |    2.9    |   2.3  | 4.3 | 4.7 |
+| hf.co/unsloth/gemma-3-4b-it-GGUF:Q4_K_M |    3.3    |   2.8  | 4.7 | 5.2 |
+| gemma3:latest                           |    3.3    |   --   | 5.7 | 6.2 |
+
+With llama.cpp I tried to offload all 37 layers to the GPU, but it only worked for the Q2 quantization. Ollama 0.6.4 worked in pure CPU mode until Q4 on the Jetson with the unsloth variant, but crashed with Google's version.
+
+|  prompt processing or token generation  |     pp    |     tg    |   pp   |   tg   |   pp   |   tg   |   pp   |   tg   |
+|:---------------------------------------:|:---------:|:---------:|:------:|:------:|:------:|:------:|:------:|:------:|
+| gemma3:1b                               |     17.58 |      5.37 |  12.74 |   4.77 |  71.63 |  31.73 |  76.11 | 166.47 |
+| hf.co/unsloth/gemma-3-4b-it-GGUF:Q2_K   |      1.77 |      1.52 |   1.98 |   1.51 |  45.55 |  14.98 |  65.96 |  87.21 |
+| hf.co/unsloth/gemma-3-4b-it-GGUF:Q3_K_M |     --    |     --    |   5.81 |   1.52 |  20.16 |  13.04 |  72.81 |  77.31 |
+| hf.co/unsloth/gemma-3-4b-it-GGUF:Q4_K_M |     --    |     --    |   2.32 |   1.61 |  18.57 |  11.64 |  69.28 |  90.41 |
+| gemma3:latest                           |     --    |     --    |   --   |   --   |  20.51 |  12.69 |  75.67 |  90.25 |
+| machine and engine                      | llama.cpp | llama.cpp | Jetson | Jetson | 13700T | 13700T | 3060Ti | 3060Ti |
 
 ## Compile llama.cpp for CPU mode
 
