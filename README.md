@@ -213,14 +213,14 @@ We use the same Jetson Nano machine from 2019, no overclocking settings. The tes
 
 ### TinyLlama-1.1B-Chat 2023-12-31
 
-Here is the prompt for b1618 and b2275, while b4400 and b5050 use the second `ollama-cli` call, and we put the prompt in the cli after the startup.
+Here is the prompt for b1618 and b2275 using `main`, while b4400 and b5050 use the second `llama-cli` call. Put the prompt in the cli after the startup.
 
 ``` sh
 ./main -hf TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF --n-gpu-layers 25 -p "Explain quantum entanglement"
 ./build/bin/llama-cli -hf TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF --n-gpu-layers 25
 ```
 
-llama.cpp has also a build-in benchmark program, here tested with the CUDA version b5043:
+llama.cpp has also a build-in benchmark program alled `llama-bench`, here tested with the CUDA version b5043:
 
 ``` sh
 m@n:~/./build/bin/llama-bench -m ../.cache/llama.cpp/unsloth_gemma-3-1b-it-GGUF_gemma-3-1b-it-Q4_K_M.gguf --n-gpu-layers 99
@@ -293,10 +293,18 @@ One might wonder if there are some applications for this small 1 billion paramet
 
 One might think that a quantized version of Gemma 3 with 4 billion parameters might work with the 4 GB RAM of the Jetson Nano. And to a degree it does, but not in a usable way. One advantage of the 4B model is its multimodality, so it could also be used for images. It would be slow, but there might be usecases where the Jetson would just crunch images and data in solitude, and we would return next day to examine the results. Well, here is my take on it:
 
-I tried 4 quantization levels, Q2, Q3, Q4 and the original file from Google. Here are the sizes of the files and the used memory with ollama 0.6.4 (April 2025) on Jetson, x86_64 CPU and Nvidia GPU:
+I tried 4 quantization levels: Q2, Q3, Q4 and the original file from Google. Plus the 1b version for comparison.
 
-|                  model                  | file [GB] | Jetson | CPU | GPU |
-|:---------------------------------------:|:---------:|:------:|:---:|:---:|
+- **1b:latest** - gemma3:1b
+- **4b:Q2** - hf.co/unsloth/gemma-3-4b-it-GGUF:Q2_K
+- **4b:Q3** - hf.co/unsloth/gemma-3-4b-it-GGUF:Q3_K_M
+- **4b:Q4** - hf.co/unsloth/gemma-3-4b-it-GGUF:Q4_K_M
+- **4b:latest** - gemma3:latest
+
+Here are the sizes of the files and the used memory in Gigabyte with *ollama 0.6.4* (April 2025) on Jetson, x86_64 CPU and Nvidia GPU:
+
+|                  model                  |   file    | Jetson | CPU | GPU |
+|:--------------------------------------- |:---------:|:------:|:---:|:---:|
 | gemma3:1b                               |   0.815   |   1.9  | 1.5 | 1.9 |
 | hf.co/unsloth/gemma-3-4b-it-GGUF:Q2_K   |    1.7    |   1.9  | 3.9 | 4.4 |
 | hf.co/unsloth/gemma-3-4b-it-GGUF:Q3_K_M |    2.9    |   2.3  | 4.3 | 4.7 |
@@ -305,14 +313,14 @@ I tried 4 quantization levels, Q2, Q3, Q4 and the original file from Google. Her
 
 With llama.cpp I tried to offload all 37 layers to the GPU, but it only worked for the Q2 quantization. Ollama 0.6.4 worked in pure CPU mode until Q4 on the Jetson with the unsloth variant, but crashed with Google's version.
 
-|  prompt processing or token generation  |     pp    |     tg    |   pp   |   tg   |   pp   |   tg   |   pp   |   tg   |
-|:---------------------------------------:|:---------:|:---------:|:------:|:------:|:------:|:------:|:------:|:------:|
-| gemma3:1b                               |     17.58 |      5.37 |  12.74 |   4.77 |  71.63 |  31.73 |  76.11 | 166.47 |
-| hf.co/unsloth/gemma-3-4b-it-GGUF:Q2_K   |      1.77 |      1.52 |   1.98 |   1.51 |  45.55 |  14.98 |  65.96 |  87.21 |
-| hf.co/unsloth/gemma-3-4b-it-GGUF:Q3_K_M |     --    |     --    |   5.81 |   1.52 |  20.16 |  13.04 |  72.81 |  77.31 |
-| hf.co/unsloth/gemma-3-4b-it-GGUF:Q4_K_M |     --    |     --    |   2.32 |   1.61 |  18.57 |  11.64 |  69.28 |  90.41 |
-| gemma3:latest                           |     --    |     --    |   --   |   --   |  20.51 |  12.69 |  75.67 |  90.25 |
-| machine and engine                      | llama.cpp | llama.cpp | Jetson | Jetson | 13700T | 13700T | 3060Ti | 3060Ti |
+|    type   |     pp    |     tg    |   pp   |   tg   |   pp   |   tg   |   pp   |   tg   |
+| --------- |:---------:|:---------:|:------:|:------:|:------:|:------:|:------:|:------:|
+| 1b:latest |     17.58 |      5.37 |  12.74 |   4.77 |  71.63 |  31.73 |  76.11 | 166.47 |
+| 4b:Q2     |      1.77 |      1.52 |   1.98 |   1.51 |  45.55 |  14.98 |  65.96 |  87.21 |
+| 4b:Q3     |     --    |     --    |   5.81 |   1.52 |  20.16 |  13.04 |  72.81 |  77.31 |
+| 4b:Q4     |     --    |     --    |   2.32 |   1.61 |  18.57 |  11.64 |  69.28 |  90.41 |
+| 4b:latest |     --    |     --    |   --   |   --   |  20.51 |  12.69 |  75.67 |  90.25 |
+| machine   | llama.cpp | llama.cpp | Jetson | Jetson | 13700T | 13700T | 3060Ti | 3060Ti |
 
 ## Compile llama.cpp for CPU mode
 
