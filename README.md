@@ -11,14 +11,13 @@ It is possible to compile a recent llama.cpp with `gcc 8.5` and `nvcc 10.2` (lat
 - [Benchmark](#benchmark)
 - [Compile llama.cpp for CPU mode](#compile-llamacpp-for-cpu-mode) - 24 minutes
 - [Install prerequisites](#install-prerequisites)
-- [Choosing the right compiler](d#choosing-the-right-compiler)
+- [Choosing the right compiler](#choosing-the-right-compiler)
 - [History](#history)
-- [Sources](d#sources)
+- [Sources](#sources)
 
-And the Jetson Nano indeed (footnote 1) uses its GPU to generate tokens with 100% and 4 Watt, while the CPU is only used in the 10% range with 0.7 Watt. It is on average **20% faster** than the pure CPU use with ollama or a CPU build - see the benchmark section below!
+And the Jetson Nano indeed (footnote 1) uses its GPU to generate tokens with 100%, 1.5 GB GPU memory and 4 Watt, while the CPU is only used in the 14% range with 0.6 Watt. It is on average **20% faster** than the pure CPU use with ollama or a CPU build - see the benchmark section below!
 
-<img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="15%"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/llama5038gpu.png" width="70%">
-
+<img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="10%"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/llama5038gpu.png" width="80%">
 ## Prerequisites
 
 You will need the following software packages installed. The section "[Install prerequisites](https://gist.github.com/kreier/6871691130ec3ab907dd2815f9313c5d#install-prerequisites)" describes the process in detail. The installation of `gcc 8.5` and `cmake 3.27` of these might take several hours.
@@ -208,10 +207,11 @@ The answers vary, sometimes it throws in a video from Veritasium. And it could e
 
 We use the same Jetson Nano machine from 2019, no overclocking settings. The test prompt for `llama-cli`, `ollama` and the older `main` is "Explain quantum entanglement". Tests include the latest ollama 0.6.4 from April 2025 in CPU mode and several versions of llama.cpp compiled in pure CPU mode and with GPU support, using different amounts of layers offloaded to the GPU. The two LLM models considerd in the benchmarks are:
 
-- 2023-12-31 [TinyLlama-1.1B-Chat Q4 K M](https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF?show_file_info=tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf) with 669 MB, 22 layers, 1.1 billion parameters and 2048 context length
-- 2025-03-12 [Gemma3:1b Q4 K M](https://huggingface.co/ggml-org/gemma-3-1b-it-GGUF?local-app=llama.cpp) with 806 MB, 27 layers, 1 billion parameters and 32768 context length
+- 2023-12-31 **B1:** [TinyLlama-1.1B-Chat Q4 K M](https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF?show_file_info=tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf) with 669 MB, 22 layers, 1.1 billion parameters and 2048 context length
+- 2025-03-12 **B2:** [Gemma3:1b Q4 K M](https://huggingface.co/ggml-org/gemma-3-1b-it-GGUF?local-app=llama.cpp) with 806 MB, 27 layers, 1 billion parameters and 32768 context length
+- 2025-04-03 **B3:** [Gemma3:4b_it_qat_q4_0](https://huggingface.co/google/gemma-3-4b-it-qat-q4_0-gguf) with 3.16 GB, , 3.88 billion parameters, image-to-text support (normalized 896x896)  and 128000 total input context
 
-### TinyLlama-1.1B-Chat 2023-12-31
+### B1: TinyLlama-1.1B-Chat 2023-12-31
 
 Here is the prompt for b1618 and b2275 using `main`, while b4400 and b5050 use the second `llama-cli` call. Put the prompt in the cli after the startup.
 
@@ -245,7 +245,7 @@ The main metric to compare here is the **token generation**. Initial versions wi
 As expected, the prompt processing is even further accelerated, since it is very compute intensive. But it only contributes to a small time amount of the final answer. *Another observation:* A GPU optimized version is significantly slower than a CPU optimized version for the Jetson with the shared memory architecture when not all layers are offloaded to the GPU.
 
 
-### Gemma3:1b 2025-03-12
+### B2: Gemma3:1b 2025-03-12
 
 This much more recent [model from March 2025](https://huggingface.co/ggml-org/gemma-3-1b-it-GGUF?local-app=llama.cpp) is slightly larger with 806 MB but much more capable than TinyLlama, and comparable in speed. The prompt is "Explain quantum entanglement"
 
@@ -275,7 +275,7 @@ ggml_cuda_init: found 1 CUDA devices:
 build: 193c3e03 (5038)
 ```
 
-<img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="25%"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/gemma3.png" width="50%">
+<img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="15%"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/gemma3.png" width="70%">
 
 While a compiled CPU version of llama.cpp is comparable in speed with a recent ollama version, so might a GPU version be slower when not offloading layers to the GPU, but be **20% faster** if the model is offloaded to the GPU!
 
@@ -289,7 +289,7 @@ One might wonder if there are some applications for this small 1 billion paramet
 
 
 
-### Gemma 3 4b
+### B3: Gemma3:4b
 
 One might think that a quantized version of Gemma 3 with 4 billion parameters might work with the 4 GB RAM of the Jetson Nano. And to a degree it does, but not in a usable way. One advantage of the 4B model is its multimodality, so it could also be used for images. It would be slow, but there might be usecases where the Jetson would just crunch images and data in solitude, and we would return next day to examine the results. Well, here is my take on it:
 
@@ -463,7 +463,7 @@ sudo update-alternatives --install /usr/bin/g++ g++ /usr/local/bin/g++ 100
 
 As of April 2025 the current version of llama.cpp can be compiled for the Jetson Nano from 2019 with GPU/CUDA support using `gcc 8.5` and `nvcc 10.2`. Here is a list of a few earlier solutions with description, sorted by their build date. Their performance is later compared in [benchmarks](https://github.com/kreier/jetson/tree/main/llama.cpp#benchmark):
 
-- 2025-04-05 [b5050](https://github.com/ggml-org/llama.cpp/releases/tag/b5050) Some extra steps had to be included to handle the new support of `bfloat16` in llama.cpp since January 2025. Procedure is described in this gist.
+- 2025-04-05 [b5050](https://github.com/ggml-org/llama.cpp/releases/tag/b5050) Some extra steps had to be included to handle the new support of `bfloat16` in llama.cpp since January 2025. Procedure is described in [this gist](https://gist.github.com/kreier/6871691130ec3ab907dd2815f9313c5d). After 24 revisions it became the foundation for this repository.
 - 2024-12-31 [b4400](https://github.com/ggml-org/llama.cpp/releases/tag/b4400) Following the steps from the [gist](https://gist.github.com/kreier/6871691130ec3ab907dd2815f9313c5d) above, step 6 can be ommited. Source: a [build for the Nintendo Switch](https://nocoffei.com/?p=352)!
 - 2024-02-26 [b2275](https://github.com/ggml-org/llama.cpp/tree/b2275) A [gist by Flor Sanders](https://gist.github.com/FlorSanders/2cf043f7161f52aa4b18fb3a1ab6022f) from 2024-04-11 describes the procedure to combile a version with GPU acceleration.
 - 2023-12-07 [b1618](https://github.com/ggml-org/llama.cpp/tree/b1618) A [medium.com article from Anurag Dogra](https://medium.com/@anuragdogra2192/llama-cpp-on-nvidia-jetson-nano-a-complete-guide-fb178530bc35) from 2025-03-26 describes the modification needed to compile llama.cpp with `gcc 8.5` and CUDA support.
