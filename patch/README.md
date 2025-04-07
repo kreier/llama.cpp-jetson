@@ -1,6 +1,8 @@
 # Patch files to llama.cpp on Jetson Nano 2019
 
-Instead of manually changing files for different builds this folder contains the edited files for each build.
+Instead of manually changing files for different builds this folder contains the edited files for each build. Only patches after b4400 are relevant, since b2275 does not use the GPU and b1618 is slower than recent CPU versions, even with exporting all layers to the GPU. And it does not support recent models like Gemma3.
+
+![speed comparison](https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/TinyLlama.png)
 
 ## b5050 2025-04-05
 
