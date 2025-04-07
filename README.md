@@ -48,7 +48,7 @@ Now we have to make changes to these 6 files before calling cmake to start compi
 - ggml/src/ggml-cuda/common.cuh 455
 - ggml/src/ggml-cuda/fattn-common.cuh 623
 - ggml/src/ggml-cuda/fattn-vec-f32.cuh 71
-- ggml/src/ggml-cuda/template-instances/../fattn-vec-f16.cuh 73
+- ggml/src/ggml-cuda/fattn-vec-f16.cuh 73
 
 Early 2025 llama.cpp started supporting and using `bfloat16`, a feature not included in nvcc 10.2. We have two options:
 
@@ -103,7 +103,7 @@ This avoids the compiler error *"__builtin_assume" is undefined* for these three
 
 - line 623, `nano ggml/src/ggml-cuda/fattn-common.cuh`
 - line 71, `nano ggml/src/ggml-cuda/fattn-vec-f32.cuh`
-- line 73, `nano ggml/src/ggml-cuda/template-instances/../fattn-vec-f16.cuh`
+- line 73, `nano ggml/src/ggml-cuda/fattn-vec-f16.cuh`
 
 If you have a version lower than b4400 you can skip the next step.
 
