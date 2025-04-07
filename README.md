@@ -18,6 +18,7 @@ It is possible to compile a recent llama.cpp with `gcc 8.5` and `nvcc 10.2` (lat
 And the Jetson Nano indeed (footnote 1) uses its GPU to generate tokens with 100%, 1.5 GB GPU memory and 4 Watt, while the CPU is only used in the 14% range with 0.6 Watt. It is on average **20% faster** than the pure CPU use with ollama or a CPU build - see the benchmark section below!
 
 <img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="10%"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/llama5038gpu.png" width="80%">
+
 ## Prerequisites
 
 You will need the following software packages installed. The section "[Install prerequisites](https://gist.github.com/kreier/6871691130ec3ab907dd2815f9313c5d#install-prerequisites)" describes the process in detail. The installation of `gcc 8.5` and `cmake 3.27` of these might take several hours.
@@ -209,7 +210,7 @@ We use the same Jetson Nano machine from 2019, no overclocking settings. The tes
 
 - 2023-12-31 **B1:** [TinyLlama-1.1B-Chat Q4 K M](https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF?show_file_info=tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf) with 669 MB, 22 layers, 1.1 billion parameters and 2048 context length
 - 2025-03-12 **B2:** [Gemma3:1b Q4 K M](https://huggingface.co/ggml-org/gemma-3-1b-it-GGUF?local-app=llama.cpp) with 806 MB, 27 layers, 1 billion parameters and 32768 context length
-- 2025-04-03 **B3:** [Gemma3:4b_it_qat_q4_0](https://huggingface.co/google/gemma-3-4b-it-qat-q4_0-gguf) with 3.16 GB, , 3.88 billion parameters, image-to-text support (normalized 896x896)  and 128000 total input context
+- 2025-04-03 **B3:** [Gemma3:4b_it_qat_q4_0](https://huggingface.co/google/gemma-3-4b-it-qat-q4_0-gguf) with 3.16 GB, 35 layers, 3.88 billion parameters, image-to-text support (normalized 896x896)  and 128000 total input context
 
 ### B1: TinyLlama-1.1B-Chat 2023-12-31
 
@@ -243,6 +244,7 @@ The prompt processing speed seems to be too high in this benchmark for the small
 The main metric to compare here is the **token generation**. Initial versions with GPU acceleration with all layers in December 2023 was slower than the current CPU version (5.25 vs 3.94), by the end of 2024 the GPU *is accelerating* the token generation, and with CUDA it is around **20% faster** (5.25 vs. 6.28 average)!
 
 As expected, the prompt processing is even further accelerated, since it is very compute intensive. But it only contributes to a small time amount of the final answer. *Another observation:* A GPU optimized version is significantly slower than a CPU optimized version for the Jetson with the shared memory architecture when not all layers are offloaded to the GPU.
+
 
 
 ### B2: Gemma3:1b 2025-03-12
@@ -288,6 +290,40 @@ One might wonder if there are some applications for this small 1 billion paramet
 - [Fine-Tuning Gemma 3 1B-IT for Financial Sentiment Analysis: A Step-by-Step Guide](https://medium.com/@lucamassaron/fine-tuning-gemma-3-1b-it-for-financial-sentiment-analysis-a-step-by-step-guide-1a025d2fc75d) by [Luca Massaron](https://medium.com/@lucamassaron), 2025-03-26 on medium.com
 
 
+### Extended testing with 11 prompts on 3 llm interpreters
+
+To better evaluate the improvements with the GPU usage I tested 11 prompts on ollama 0.6.4 with CPU, llama.cpp b5058 compiled for CPU and then llama.cpp b5050 for GPU. The initial **prompt processing** now 2.4x faster than ollama and more than 3.1x faster than llama.cpp for CPU. But for our prompts that's only 1-4 seconds. The more important **token generation** is 11% faster with CUDA than on CPU with ollama, and on **average 25% faster** than llama.cpp on CPU. All details can be found in [this Google sheet](https://docs.google.com/spreadsheets/d/1jJhGaHdU4valkIb42PoklJUs4nkPywOTQi1LQ52G1lY/edit?usp=sharing).
+
+<img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/gemma3.1b_pp.png" width="49%"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/gemma3.1b_tg.png" width="49%">
+
+The standard deviation on the prompt processing is rather large, since depending on the prompt the speed varies 11-44 token/second. Here are the numerical values:
+
+| llm software        | prompt processing | token generation |
+|---------------------|:-----------------:|:----------------:|
+| ollama CPU 0.6.4    |     9.56 ± 0.3    |    4.69 ± 0.23   |
+| llama.cpp CPU b5058 |     7.5 ± 0.3     |    4.22 ± 0.14   |
+| llama.cpp GPU b5050 |    23.29 ± 9.6    |    5.26 ± 0.37   |
+
+Here are the 11 questions or prompts:
+
+- Explain quantum entanglement
+- Write a 1000 word essay about the French revolution
+- Compare Goldilocks to Cinderella
+- Write a python program that generates 100 random strings for a name and family name, and export them as a csv file
+- Write a haiku about artificial intelligence
+- Explain the fundamental theorem of calculus and its symbols
+- What is CRISPR and what can it be used for?
+- If a train travels 100 miles in 2 hours, and then travels 50 miles in 1 hour, what is its average speed for the entire trip? Let's think step by step.
+- You are a travel guide. Recommend a 3-day itinerary for someone visiting Tokio, focusing on local culture and food.
+- Imagine there is a circular pond in an oasis, with two trees at the edge of the pond, on opposite sides. Bob sets up a hammock by hanging it between the two trees. He gets into the hammock and falls asleep. If he were to roll over in his sleep and fall out of the hammock, where would he fall?
+- What is e?
+
+In a combined graph it looks like this:
+
+<img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="15%"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/gemma3.1b_comparison.png" width="70%">
+
+
+
 
 ### B3: Gemma3:4b
 
@@ -301,7 +337,7 @@ I tried 4 quantization levels: Q2, Q3, Q4 and the original file from Google. Plu
 - **4b:Q4** - hf.co/unsloth/gemma-3-4b-it-GGUF:Q4_K_M
 - **4b:latest** - gemma3:latest
 
-Here are the sizes of the files and the used memory in Gigabyte with *ollama 0.6.4* (April 2025) on Jetson, x86_64 CPU and Nvidia GPU:
+Here are the sizes of the files and the used memory **in Gigabyte** with *ollama 0.6.4* (April 2025) on Jetson, x86_64 CPU and Nvidia GPU:
 
 |                  model                  |   file    | Jetson | CPU | GPU |
 |:--------------------------------------- |:---------:|:------:|:---:|:---:|
