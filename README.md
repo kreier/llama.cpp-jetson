@@ -4,7 +4,7 @@
 ![GitHub License](https://img.shields.io/github/license/kreier/llama.cpp-jetson)
 [![pages-build-deployment](https://github.com/kreier/llama.cpp-jetson/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/kreier/llama.cpp-jetson/actions/workflows/pages/pages-build-deployment)
 
-It is possible to compile a recent llama.cpp with `gcc 8.5` and `nvcc 10.2` (latest supported CUDA compiler from Nvidia for the 2019 Jetson Nano) that also supports the use of the GPU.
+It is possible to compile a recent llama.cpp with `gcc 8.5` and `nvcc 10.2` (latest supported CUDA compiler from Nvidia for the 2019 Jetson Nano) that also supports the use of the GPU. To save hours of compile time you can use [this other repository](https://github.com/kreier/llama.cpp-jetson.nano) and directly install a compiled version.
 
 - [Prerequisites](#prerequisites)
 - [Procedure](#procedure) - 5 minutes, plus 85 minutes for the compilation in the last step
@@ -247,6 +247,8 @@ As expected, the prompt processing is even further accelerated, since it is very
 
 
 
+
+
 ### B2: Gemma3:1b 2025-03-12
 
 This much more recent [model from March 2025](https://huggingface.co/ggml-org/gemma-3-1b-it-GGUF?local-app=llama.cpp) is slightly larger with 806 MB but much more capable than TinyLlama, and comparable in speed. The prompt is "Explain quantum entanglement"
@@ -282,7 +284,7 @@ build: 193c3e03 (5038)
 While a compiled CPU version of llama.cpp is comparable in speed with a recent ollama version, so might a GPU version be slower when not offloading layers to the GPU, but be **20% faster** if the model is offloaded to the GPU!
 
 
-### Applications for Gemma 3 1b
+#### Applications for Gemma 3 1b
 
 One might wonder if there are some applications for this small 1 billion parameter model that runs on the Jetson with GPU acceleration. Here are a few I found:
 
@@ -290,7 +292,7 @@ One might wonder if there are some applications for this small 1 billion paramet
 - [Fine-Tuning Gemma 3 1B-IT for Financial Sentiment Analysis: A Step-by-Step Guide](https://medium.com/@lucamassaron/fine-tuning-gemma-3-1b-it-for-financial-sentiment-analysis-a-step-by-step-guide-1a025d2fc75d) by [Luca Massaron](https://medium.com/@lucamassaron), 2025-03-26 on medium.com
 
 
-### Extended testing with 11 prompts on 3 llm interpreters
+#### Extended testing with 11 prompts on 3 llm interpreters
 
 To better evaluate the improvements with the GPU usage I tested 11 prompts on ollama 0.6.4 with CPU, llama.cpp b5058 compiled for CPU and then llama.cpp b5050 for GPU. The initial **prompt processing** now 2.4x faster than ollama and more than 3.1x faster than llama.cpp for CPU. But for our prompts that's only 1-4 seconds. The more important **token generation** is 11% faster with CUDA than on CPU with ollama, and on **average 25% faster** than llama.cpp on CPU. All details can be found in [this Google sheet](https://docs.google.com/spreadsheets/d/1jJhGaHdU4valkIb42PoklJUs4nkPywOTQi1LQ52G1lY/edit?usp=sharing).
 
@@ -321,6 +323,14 @@ Here are the 11 questions or prompts:
 In a combined graph it looks like this:
 
 <img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="15%"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/gemma3.1b_comparison.png" width="70%">
+
+#### Explaining the variance in prompt processing when using the GPU
+
+The big variance in processing speed for the input tokens was surprizing. Having a closer look it appeared that longer input prompts achieve a faster speed. This would in part explain the very high results when using `llama-bench` since it labels its speed results as `pp512` which is rather large. The 11 prompts from this benchmark range only from 12 to 76 tokens in Gemma3. The following graph visualizes that this dependency from the prompt length exists, while it does not change in CPU mode. And the token generation rate tg is also not affected, this only has a slightly faster generation speed in the first seconds:
+
+![pp and tg versus number of input tokens](docs/gemma3_b5050_pp_tg.png)
+
+You see in the left graph that the token generation with GPU is slightly faster than the CPU mode (blue vs. yellow) for all input lengths. The prompt processing is faster, and with CPU independent of prompt length (red) but faster with longer prompts (green).
 
 
 
