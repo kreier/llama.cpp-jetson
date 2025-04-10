@@ -235,7 +235,7 @@ ggml_cuda_init: found 1 CUDA devices:
 build: c262bedd (5043)
 ```
 
-The prompt processing speed seems to be too high in this benchmark for the small models run on the Jetson Nano. To have a more realistic comparison for the graph below the `llama-cli` was used to determine both the pp and tg metrics. Similar results were achieved with longer prompts like "Write a 1000 word essay about the French Revolution".
+The prompt processing speed seems to be too high in this benchmark (found the answer a few days later, see [explanation later in this document](#explaining-the-variance-in-prompt-processing-when-using-the-gpu)) for the small models run on the Jetson Nano. To have a more realistic comparison for the graph below the `llama-cli` was used to determine both the pp and tg metrics. Similar results were achieved with longer prompts like "Write a 1000 word essay about the French Revolution".
 
 ![TinyLlama](https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/TinyLlama.png)
 
@@ -259,7 +259,7 @@ llama-cli -hf unsloth/gemma-3-1b-it-GGUF:Q4_K_M
 ./build/bin/llama-bench -m ../.cache/llama.cpp/ggml-org_gemma-3-1b-it-GGUF_gemma-3-1b-it-Q4_K_M.gguf --n-gpu-layers 0
 ```
 
-There is also an integrated benchmark program `build/bin/llama-bench -m ggml-org/gemma-3-1b-it-GGUF` in llama.cpp. The results for prompt processing seem artificially high, but demonstrate a dependence on the number of layers used:
+There is also an integrated benchmark program `build/bin/llama-bench -m ggml-org/gemma-3-1b-it-GGUF` in llama.cpp. The results for prompt processing seem artificially high ([graph and explanation later in this document](#explaining-the-variance-in-prompt-processing-when-using-the-gpu)), but demonstrate a dependence on the number of layers used:
 
 |       layers      |   0   |   5   |   10   |   15   |   20   |   25   |   27   |  CPU |
 |:-----------------:|:-----:|:-----:|:------:|:------:|:------:|:------:|:------:|:----:|
@@ -331,6 +331,13 @@ The big variance in processing speed for the input tokens was surprizing. Having
 ![pp and tg versus number of input tokens](docs/gemma3_b5050_pp_tg.png)
 
 You see in the left graph that the token generation with GPU is slightly faster than the CPU mode (blue vs. yellow) for all input lengths. The prompt processing is faster, and with CPU independent of prompt length (red) but faster with longer prompts (green).
+
+#### Increased speed in token generation when exporting more layers to the GPU
+
+Another parameter affecting the speed of generating an answer is the number of layers exported to the GPU with `--n-gpu-layers 99`. In this case the **prompt processing** is largely unaffected, while it **more than doubles** the speed of the **token generation** - even with the unified memory of the Jetson Nano. A CPU compile as only `4.27` in token generation:
+
+<img src="docs/gemma3_b5050_pp.svg" width="49%"><img src="docs/gemma3_b5050_tg.svg" width="49%">
+
 
 
 
