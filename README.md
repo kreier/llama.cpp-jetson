@@ -10,7 +10,7 @@ It is possible to compile a recent llama.cpp with `gcc 8.5` and `nvcc 10.2` (lat
 - [Procedure](#procedure) - 5 minutes, plus 85 minutes for the compilation in the last step
 - [Benchmark](#benchmark)
 - [Compile llama.cpp for CPU mode](#compile-llamacpp-for-cpu-mode) - 24 minutes
-- [Install build 5050](#install-build-5050) - 1 minute, first start of Gemma3 in 7 minutes (later 10 seconds)
+- [Install build 5050](#install-build-5050) - 1 minute, first start needs extra 6:30 min (later 10 seconds)
 - [Install prerequisites](#install-prerequisites)
   - [Install `cmake >= 3.14`](#install-cmake--314) - 38 minutes
 - [Choosing the right compiler](#choosing-the-right-compiler)
@@ -20,7 +20,7 @@ It is possible to compile a recent llama.cpp with `gcc 8.5` and `nvcc 10.2` (lat
 - [History](#history)
 - [Sources](#sources)
 
-And the Jetson Nano indeed (footnote 1) uses its GPU to generate tokens with 100%, 1.5 GB GPU memory and 4 Watt, while the CPU is only used in the 14% range with 0.6 Watt. It is on average **20% faster** than the pure CPU use with ollama or a CPU build - see the benchmark section below!
+And the Jetson Nano indeed ([footnote 1](#footnotes)) uses its GPU to generate tokens with 100%, 1.5 GB GPU memory and 4 Watt, while the CPU is only used in the 14% range with 0.6 Watt. It is on average **20% faster** than the pure CPU use with ollama or a CPU build - see the benchmark section below!
 
 <img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="10%"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/llama5038gpu.png" width="80%">
 
@@ -112,7 +112,7 @@ This avoids the compiler error *"__builtin_assume" is undefined* for these three
 
 If you have a version lower than b4400 you can skip the next step.
 
-In January 2025 with version larger than b4400 llama.cpp started including support for bfloat16. There is a standard library `cuda_bf16.h` in the folder `/usr/local/cuda-10.2/targets/aarch64-linux/include` for nvcc 11.0 and larger. With more than 5000 lines one can not simply copy a later version this file into this folder (with its companion `cuda_bf16.hpp` and 3800 lines) and hope it would work. Since it is linked to version 11 or 12, the error messages keep expanding (e.g. `/usr/local/cuda/include/cuda_bf16.h:4322:10: fatal error: nv/target: No such file or directory`). We have two working options:
+In January 2025 with version larger than b4400 llama.cpp started including support for `bfloat16`. There is a standard library `cuda_bf16.h` in the folder `/usr/local/cuda/targets/aarch64-linux/include` for nvcc 11.0 and larger. It has more than 5000 lines. One cannot simply copy and paste a version from Cuda 11 to our folder for Cuda 10.2 and hope it would work. The same applies to its companion `cuda_bf16.hpp` with 3800 lines. Since it is linked to version 11 or 12, the error messages keep expanding (e.g. `/usr/local/cuda/include/cuda_bf16.h:4322:10: fatal error: nv/target: No such file or directory`). We have two working options:
 
 ### 6. Option A: Create a `cuda_bf16.h` that redefines `nv_bfloat16` as `half`
 
@@ -230,24 +230,27 @@ llama-cli -hf kreier/tiny
 llama.cpp has also a build-in benchmark program alled `llama-bench`, here tested with the CUDA version b5043:
 
 ``` sh
-m@n:~/./build/bin/llama-bench -m ../.cache/llama.cpp/unsloth_gemma-3-1b-it-GGUF_gemma-3-1b-it-Q4_K_M.gguf --n-gpu-layers 99
+m@n:~/./build/bin/llama-bench -m ../.cache/llama.cpp/TheBloke_TinyLlama-1.1B-Chat-v1.0.Q2_K.gguf --n-gpu-layers 99
 ggml_cuda_init: found 1 CUDA devices:
   Device 0: NVIDIA Tegra X1, compute capability 5.3, VMM: no
-| model                   |       size |   params | backend | ngl |  test |           t/s |
-| ----------------------- | ---------: | -------: | ------- | --: | ----: | ------------: |
-| gemma3 1B Q4_K - Medium | 762.49 MiB | 999.89 M | CUDA    |  99 | pp512 | 116.49 ± 0.07 |
-| gemma3 1B Q4_K - Medium | 762.49 MiB | 999.89 M | CUDA    |  99 | tg128 |   5.93 ± 0.01 |
+| model                  |       size | params | backend | ngl |  test |          t/s |
+| ---------------------- | ---------: | -----: | ------- | --: | ----: | -----------: |
+| llama 1B Q4_K - Medium | 636.18 MiB | 1.10 B | CUDA    |  99 | pp512 | 80.57 ± 0.33 |
+| llama 1B Q4_K - Medium | 636.18 MiB | 1.10 B | CUDA    |  99 | tg128 |  6.69 ± 0.00 |
 
 build: c262bedd (5043)
 ```
 
 The prompt processing speed seems to be too high in this benchmark (found the answer a few days later, see [explanation later in this document](#explaining-the-variance-in-prompt-processing-when-using-the-gpu)) for the small models run on the Jetson Nano. To have a more realistic comparison for the graph below the `llama-cli` was used to determine both the pp and tg metrics. Similar results were achieved with longer prompts like "Write a 1000 word essay about the French Revolution".
 
-![TinyLlama](https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/TinyLlama.png)
+![TinyLlama as svg](https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/TinyLlama_20250411.svg)
 
 **Explanation**: Earlier editions of llama.cpp like b1618 from December 2023 or b4400 from December 2024 got faster in all their metrics with improvements to their code. The native speed of a CPU compile from April 2025 (b5036) has the same speed (within error) as a CPU build from ollama 0.6.4 from the same time for both pp and tg.
 
-The main metric to compare here is the **token generation**. Initial versions with GPU acceleration with all layers in December 2023 was slower than the current CPU version (5.25 vs 3.94), by the end of 2024 the GPU *is accelerating* the token generation, and with CUDA it is around **20% faster** (5.25 vs. 6.28 average)!
+The main metric to compare here is the **token generation**. Initial versions with GPU acceleration with all layers in December 2023 was slower than the current CPU version (5.25 vs 3.94), by the end of 2024 the GPU *is accelerating* the token generation, and with CUDA it is around **20% faster** (5.25 vs. 6.28 average)! Here just tg in green over CPU/GPU and time:
+
+![TinyLlama as svg](https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/TinyLlama_20250411_tg.svg)
+
 
 As expected, the prompt processing is even further accelerated, since it is very compute intensive. But it only contributes to a small time amount of the final answer. *Another observation:* A GPU optimized version is significantly slower than a CPU optimized version for the Jetson with the shared memory architecture when not all layers are offloaded to the GPU.
 
@@ -422,7 +425,7 @@ The first start with Gemma3 will take **almost 7 minutes** after `main: load mod
 llama-cli -hf ggml-org/gemma-3-1b-it-GGUF --n-gpu-layers 99
 ```
 
-A copy of [TinyLlama](https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF) is faster in startup, with `llama-cli -hf kreier/tiny` just 60 seconds. 
+A copy of [TinyLlama](https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF) has the same **6:30 min** startup pause at the `main: load model the model and apply lora adapter, if any` step. It can be started with `llama-cli -hf kreier/tiny`. 
 
 
 
