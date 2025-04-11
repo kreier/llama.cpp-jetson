@@ -14,9 +14,9 @@ It is possible to compile a recent llama.cpp with `gcc 8.5` and `nvcc 10.2` (lat
 - [Install prerequisites](#install-prerequisites)
   - [Install `cmake >= 3.14`](#install-cmake--314) - 38 minutes
 - [Choosing the right compiler](#choosing-the-right-compiler)
-  - [GCC 9.4](#gcc-94)
-  - [GCC 8.4](#gcc-84)
-  - [GCC 8.5](#gcc-85)
+  - [GCC 9.4](#gcc-94) - 4 minutes
+  - [GCC 8.4](#gcc-84) - 24 seconds
+  - [GCC 8.5](#gcc-85) - 3 hours
 - [History](#history)
 - [Sources](#sources)
 
@@ -511,6 +511,8 @@ But it is not compatible with `nvcc 10.2` and shows `error: #error -- unsupporte
 #error -- unsupported GNU version! gcc versions later than 8 are not supported!
 #endif /* __GNUC__ > 8 */ 
 ```
+
+But you can just edit the 8 to a 9 in line 136 with `sudo nano /usr/local/cuda/targets/aarch64-linux/include/crt/host_config.h`. It works at least until 9% with error in 1214 identifier "CUDA_R_16BF" is undefined
 
 ### GCC 8.4
 
