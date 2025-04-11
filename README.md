@@ -219,6 +219,7 @@ Here is the prompt for b1618 and b2275 using `main`, while b4400 and b5050 use t
 ``` sh
 ./main -hf TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF --n-gpu-layers 25 -p "Explain quantum entanglement"
 ./build/bin/llama-cli -hf TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF --n-gpu-layers 25
+llama-cli -hf kreier/tiny
 ```
 
 llama.cpp has also a build-in benchmark program alled `llama-bench`, here tested with the CUDA version b5043:
@@ -405,7 +406,12 @@ As best practice you can add these to the end of your *.bashrc* with `nano .bash
 
 ### Update the system - could be skipped?
 
-Usually I updated the system and the installed packages to the latest available versions, and currently that's about 248 packages. This will take several hours. I'll test in the future if that is actually necessary to compile llama.cpp. And stop the time. 
+Usually I updated the system and the installed packages to the latest available versions, and currently that's about 348 packages. Without the upgrade your system states:
+
+- JetPack 4.6.1 (32.7.1-20220219090432) - `dpkg-query --show nvidia-l4t-core`
+- kernel Linux nano 4.9.253-tegra from February 19, 2022 - `uname -a`
+
+The upgrade will take several hours. I'll test in the future if that is actually necessary to compile llama.cpp. And stop the time. It is not necessary to run the compiled version of llama.cpp b5050 available [here](https://github.com/kreier/llama.cpp-jetson.nano).
 
 ``` sh
 sudo apt update
@@ -428,7 +434,7 @@ Now there are 3 further things to install or update:
 ``` sh
 sudo apt update
 sudo apt install nano curl libcurl4-openssl-dev python3-pip
-pip3 install jetson-top
+pip3 -H install -U jetson-stats
 ```
 
 ### Install `cmake >= 3.14`
