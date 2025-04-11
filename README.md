@@ -11,8 +11,12 @@ It is possible to compile a recent llama.cpp with `gcc 8.5` and `nvcc 10.2` (lat
 - [Benchmark](#benchmark)
 - [Compile llama.cpp for CPU mode](#compile-llamacpp-for-cpu-mode) - 24 minutes
 - [Install build 5050](#install-build-5050) - 1 minute, first start of Gemma3 in 7 minutes (later 10 seconds)
-- [Install prerequisites](#install-prerequisites) - 99 minutes
+- [Install prerequisites](#install-prerequisites)
+  - [Install `cmake >= 3.14`](#install-cmake--314) - 38 minutes
 - [Choosing the right compiler](#choosing-the-right-compiler)
+  - [GCC 9.4](#gcc-94)
+  - [GCC 8.4](#gcc-84)
+  - [GCC 8.5](#gcc-85)
 - [History](#history)
 - [Sources](#sources)
 
@@ -420,6 +424,8 @@ llama-cli -hf ggml-org/gemma-3-1b-it-GGUF --n-gpu-layers 99
 
 A copy of [TinyLlama](https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF) is faster in startup, with `llama-cli -hf kreier/tiny` just 60 seconds. 
 
+
+
 ## Install prerequisites
 
 The [latest image from Nvidia](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#write) for the 2019 Jetson Nano contains a ubuntu 18.04 LTS distribution with a kernel *Kernel GNU/Linux 4.9.201-tegra*, the *GNU Compiler Collection 7.5.0 (G++ 7.5.0) from 2019*, the *NVIDIA Cuda Compiler nvcc 10.3.200* and has *Jetpack 4.6.1-b110* (check with `sudo apt-cache show nvidia-jetpack`) installed. If `nvcc --version` does not confirm the installed Cuda Compiler you need to update the links with
@@ -466,14 +472,14 @@ pip3 -H install -U jetson-stats
 
 ### Install `cmake >= 3.14`
 
-Purge any old `cmake` installation and install a newer `3.27`
+Purge any old `cmake` installation and install a newer `3.27`. It will take **38 minutes** (`bootstrap` and `make` each take 18 minutes).
 
 ``` sh
 sudo apt-get remove --purge cmake
-sudo apt-get isntall libssl-dev
+sudo apt-get install libssl-dev
 wget https://cmake.org/files/v3.27/cmake-3.27.1.tar.gz
 tar -xzvf cmake-3.27.1.tar.gz
-cd cmake-3.27.1.tar.gz
+cd cmake-3.27.1
 ./bootstrap
 make -j4
 sudo make install
