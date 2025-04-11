@@ -10,7 +10,8 @@ It is possible to compile a recent llama.cpp with `gcc 8.5` and `nvcc 10.2` (lat
 - [Procedure](#procedure) - 5 minutes, plus 85 minutes for the compilation in the last step
 - [Benchmark](#benchmark)
 - [Compile llama.cpp for CPU mode](#compile-llamacpp-for-cpu-mode) - 24 minutes
-- [Install prerequisites](#install-prerequisites)
+- [Install build 5050](#install-build-5050) - 1 minute, first start of Gemma3 in 7 minutes (later 10 seconds)
+- [Install prerequisites](#install-prerequisites) - 99 minutes
 - [Choosing the right compiler](#choosing-the-right-compiler)
 - [History](#history)
 - [Sources](#sources)
@@ -376,6 +377,15 @@ With llama.cpp I tried to offload all 37 layers to the GPU, but it only worked f
 | 4b:latest |     --    |     --    |   --   |   --   |  20.51 |  12.69 |  75.67 |  90.25 |
 | machine   | llama.cpp | llama.cpp | Jetson | Jetson | 13700T | 13700T | 3060Ti | 3060Ti |
 
+
+
+
+
+
+
+
+
+
 ## Compile llama.cpp for CPU mode
 
 This can be done with `gcc 8.5` or `gcc 9.4` in 24 minutes and was tested with a version as recent as April 2025. You can follow the [instructions from llama.cpp](https://github.com/ggml-org/llama.cpp/blob/master/docs/build.md). We added the parameter `-DLLAMA_CURL=ON` to support an easy model download from huggingface with the `-hf` command:
@@ -392,6 +402,23 @@ After finishing the compilation its time for the first model and AI chat:
 ```
 ./build/bin/llama-cli -hf ggml-org/gemma-3-1b-it-GGUF
 ```
+
+
+## Install build 5050
+
+The fastest way to get llama.cpp with CUDA support running is installing the compiled files with this script in 44 seconds from [this repository](https://github.com/kreier/llama.cpp-jetson.nano):
+
+``` sh
+curl -fsSL https://kreier.github.io/llama.cpp-jetson.nano/install.sh | sh
+```
+
+The first start with Gemma3 will take **almost 7 minutes** after `main: load model the model and apply lora adapter, if any`, but later runs start in less than 10 seconds:
+
+``` sh
+llama-cli -hf ggml-org/gemma-3-1b-it-GGUF --n-gpu-layers 99
+```
+
+A copy of [TinyLlama](https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF) is faster in startup, with `llama-cli -hf kreier/tiny` just 60 seconds. 
 
 ## Install prerequisites
 
