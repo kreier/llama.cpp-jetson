@@ -10,8 +10,13 @@ It is possible to compile a recent llama.cpp with `gcc 8.5` and `nvcc 10.2` (lat
 - [Procedure](#procedure) - 5 minutes, plus 85 minutes for the compilation in the last step
 - [Benchmark](#benchmark)
 - [Compile llama.cpp for CPU mode](#compile-llamacpp-for-cpu-mode) - 24 minutes
+- [Install build 5050](#install-build-5050) - 1 minute, first start of Gemma3 in 7 minutes (later 10 seconds)
 - [Install prerequisites](#install-prerequisites)
+  - [Install `cmake >= 3.14`](#install-cmake--314) - 38 minutes
 - [Choosing the right compiler](#choosing-the-right-compiler)
+  - [GCC 9.4](#gcc-94) - 4 minutes
+  - [GCC 8.4](#gcc-84) - 24 seconds
+  - [GCC 8.5](#gcc-85) - 3 hours
 - [History](#history)
 - [Sources](#sources)
 
@@ -219,6 +224,7 @@ Here is the prompt for b1618 and b2275 using `main`, while b4400 and b5050 use t
 ``` sh
 ./main -hf TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF --n-gpu-layers 25 -p "Explain quantum entanglement"
 ./build/bin/llama-cli -hf TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF --n-gpu-layers 25
+llama-cli -hf kreier/tiny
 ```
 
 llama.cpp has also a build-in benchmark program alled `llama-bench`, here tested with the CUDA version b5043:
@@ -375,6 +381,15 @@ With llama.cpp I tried to offload all 37 layers to the GPU, but it only worked f
 | 4b:latest |     --    |     --    |   --   |   --   |  20.51 |  12.69 |  75.67 |  90.25 |
 | machine   | llama.cpp | llama.cpp | Jetson | Jetson | 13700T | 13700T | 3060Ti | 3060Ti |
 
+
+
+
+
+
+
+
+
+
 ## Compile llama.cpp for CPU mode
 
 This can be done with `gcc 8.5` or `gcc 9.4` in 24 minutes and was tested with a version as recent as April 2025. You can follow the [instructions from llama.cpp](https://github.com/ggml-org/llama.cpp/blob/master/docs/build.md). We added the parameter `-DLLAMA_CURL=ON` to support an easy model download from huggingface with the `-hf` command:
@@ -392,6 +407,25 @@ After finishing the compilation its time for the first model and AI chat:
 ./build/bin/llama-cli -hf ggml-org/gemma-3-1b-it-GGUF
 ```
 
+
+## Install build 5050
+
+The fastest way to get llama.cpp with CUDA support running is installing the compiled files with this script in 44 seconds from [this repository](https://github.com/kreier/llama.cpp-jetson.nano):
+
+``` sh
+curl -fsSL https://kreier.github.io/llama.cpp-jetson.nano/install.sh | sh
+```
+
+The first start with Gemma3 will take **almost 7 minutes** after `main: load model the model and apply lora adapter, if any`, but later runs start in less than 10 seconds:
+
+``` sh
+llama-cli -hf ggml-org/gemma-3-1b-it-GGUF --n-gpu-layers 99
+```
+
+A copy of [TinyLlama](https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF) is faster in startup, with `llama-cli -hf kreier/tiny` just 60 seconds. 
+
+
+
 ## Install prerequisites
 
 The [latest image from Nvidia](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#write) for the 2019 Jetson Nano contains a ubuntu 18.04 LTS distribution with a kernel *Kernel GNU/Linux 4.9.201-tegra*, the *GNU Compiler Collection 7.5.0 (G++ 7.5.0) from 2019*, the *NVIDIA Cuda Compiler nvcc 10.3.200* and has *Jetpack 4.6.1-b110* (check with `sudo apt-cache show nvidia-jetpack`) installed. If `nvcc --version` does not confirm the installed Cuda Compiler you need to update the links with
@@ -405,7 +439,12 @@ As best practice you can add these to the end of your *.bashrc* with `nano .bash
 
 ### Update the system - could be skipped?
 
-Usually I updated the system and the installed packages to the latest available versions, and currently that's about 248 packages. This will take several hours. I'll test in the future if that is actually necessary to compile llama.cpp. And stop the time. 
+Usually I updated the system and the installed packages to the latest available versions, and currently that's about 348 packages. Without the upgrade your system states:
+
+- JetPack 4.6.1 (32.7.1-20220219090432) - `dpkg-query --show nvidia-l4t-core`
+- kernel Linux nano 4.9.253-tegra from February 19, 2022 - `uname -a`
+
+The upgrade will take several hours. I'll test in the future if that is actually necessary to compile llama.cpp. And stop the time. It is not necessary to run the compiled version of llama.cpp b5050 available [here](https://github.com/kreier/llama.cpp-jetson.nano).
 
 ``` sh
 sudo apt update
@@ -428,19 +467,19 @@ Now there are 3 further things to install or update:
 ``` sh
 sudo apt update
 sudo apt install nano curl libcurl4-openssl-dev python3-pip
-pip3 install jetson-top
+pip3 -H install -U jetson-stats
 ```
 
 ### Install `cmake >= 3.14`
 
-Purge any old `cmake` installation and install a newer `3.27`
+Purge any old `cmake` installation and install a newer `3.27`. It will take **38 minutes** (`bootstrap` and `make` each take 18 minutes).
 
 ``` sh
 sudo apt-get remove --purge cmake
-sudo apt-get isntall libssl-dev
+sudo apt-get install libssl-dev
 wget https://cmake.org/files/v3.27/cmake-3.27.1.tar.gz
 tar -xzvf cmake-3.27.1.tar.gz
-cd cmake-3.27.1.tar.gz
+cd cmake-3.27.1
 ./bootstrap
 make -j4
 sudo make install
@@ -472,6 +511,8 @@ But it is not compatible with `nvcc 10.2` and shows `error: #error -- unsupporte
 #error -- unsupported GNU version! gcc versions later than 8 are not supported!
 #endif /* __GNUC__ > 8 */ 
 ```
+
+But you can just edit the 8 to a 9 in line 136 with `sudo nano /usr/local/cuda/targets/aarch64-linux/include/crt/host_config.h`. It works at least until 9% with error in 1214 identifier "CUDA_R_16BF" is undefined
 
 ### GCC 8.4
 
