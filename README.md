@@ -93,7 +93,7 @@ add_link_options(-Wl,--copy-dt-needed-entries)
 
 With `target_link_libraries(ggml PRIVATE stdc++fs)` and `add_link_options(-Wl,--copy-dt-needed-entries)` we avoid some static link issues that don't appear in later gcc versions. See [nocoffei's comment](https://nocoffei.com/?p=352).
 
-### 4. Remove *cpmstexpr* from line 455 in `ggml/src/ggml-cuda/common.cuh`
+### 4. Remove *constexpr* from line 455 in `ggml/src/ggml-cuda/common.cuh`
 
 Use `nano ggml/src/ggml-cuda/common.cuh` to remove the **constexpr** after the *static* in line 455. This feature from CUDA C++ 17 we don't support anyway. After that it looks like:
 
@@ -102,9 +102,9 @@ Use `nano ggml/src/ggml-cuda/common.cuh` to remove the **constexpr** after the *
 static __device__ int8_t kvalues_iq4nl[16] = {-127, -104, -83, -65, -49, -35, -22, -10, 1, 13, 25, 38, 53, 69, 89, 113};
 ```
 
-### 5. Comment lines containing *__buildin_assume* with // 
+### 5. Comment lines containing *__buildin_assume* by adding "//"
 
-This avoids the compiler error *"__builtin_assume" is undefined* for these three files:
+This avoids the compiler error *"__builtin_assume" is undefined* for three files. Comment the instructions by adding a // in front:
 
 - line 623, `nano ggml/src/ggml-cuda/fattn-common.cuh`
 - line 71, `nano ggml/src/ggml-cuda/fattn-vec-f32.cuh`
