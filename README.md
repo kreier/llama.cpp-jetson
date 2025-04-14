@@ -461,9 +461,9 @@ At two occations you are asked to decide if you want to update a specific settin
 
 Now there are 3 further things to install or update:
 
-- A few additional packages like `jtop` to check system activity - 3 minutes
-- cmake >= 3.14 - 45 minutes??
-- gcc 8.5.0 - 3 hours
+- **4 minutes**: a few additional packages like `jtop` to check system activity
+- **38 minutes**: cmake >= 3.14 (we chose 3.27)
+- **3 hours**: gcc 8.5.0 (it works with 9.4 too, if not to export to another machine - then only 4 minutes)
 
 ### Install additional helpful packages
 
@@ -554,12 +554,18 @@ sudo update-alternatives --install /usr/bin/gcc gcc /usr/local/bin/gcc 100
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/local/bin/g++ 100
 ```
 
-| version | release    | libstdc++ | GLIBCXX |
-|---------|------------|-----------|---------|
-| 7.5.0   | 2019-11-14 | 6.0.25    | 3.4.25  |
-| 8.4.0   | 2020-03-04 | 6.0.25    | 3.4.25  |
-| 8.5.0   | 2021-05-14 |           |         |
-| 9.4.0   | 2021-06-01 |           |         |
+| version | release    | libstdc++ | GLIBCXX | /usr/lib/gcc/~/version |
+|---------|------------|-----------|---------|------------------------|
+| 7.5.0   | 2019-11-14 | 6.0.25    | 3.4.25  |                        |
+| 8.4.0   | 2020-03-04 | 6.0.25    | 3.4.25  |                        |
+| 8.5.0   | 2021-05-14 | 6.0.25    | 3.4.25  | ~/8/3.4.25             |
+| 9.4.0   | 2021-06-01 |           |         |                        |
+| 13.3.0  | 2024-05-21 | 6.0.33    | 3.4.33  | ~/13/3.4.33            |
+
+- GCC versions: [https://gcc.gnu.org/releases.html](https://gcc.gnu.org/releases.html)
+- `ll /usr/lib/aarch64-linux-gnu/libstd*`
+- `strings /usr/lib/aarch64-linux-gnu/libstdc++.so.6 | grep GLIBCXX`
+
 
 ## History
 
