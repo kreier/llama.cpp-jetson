@@ -504,9 +504,7 @@ sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 9
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 9
 ```
 
-But it is not compatible with `nvcc 10.2` and shows `error: #error -- unsupported GNU version! gcc versions later than 8 are not supported!`. The reasons are found in line 136 of 
-
-> /usr/local/cuda/targets/aarch64-linux/include/crt/host_config.h
+Yet versions 9 and higher are not compatible with `nvcc 10.2` and show `error: #error -- unsupported GNU version! gcc versions later than 8 are not supported!`. The reasons are found in line 136 of `/usr/local/cuda/targets/aarch64-linux/include/crt/host_config.h`:
 
 ``` h
 #if defined (__GNUC__)
@@ -515,11 +513,11 @@ But it is not compatible with `nvcc 10.2` and shows `error: #error -- unsupporte
 #endif /* __GNUC__ > 8 */ 
 ```
 
-But you can just edit the 8 to a 9 in line 136 with `sudo nano /usr/local/cuda/targets/aarch64-linux/include/crt/host_config.h`. It works at least until 9% with error in 1214 identifier "CUDA_R_16BF" is undefined
+You can edit his line. Change **8** to a **9** with `sudo nano /usr/local/cuda/targets/aarch64-linux/include/crt/host_config.h` in line 136. The compilation is the same as with 8.5 afterwards, and the installation is much faster, just 4 minutes instead of 3 hours! The created files rely on `/usr/lib/aarch64-linux-gnu/libstdc++.so.6` being linked to `/usr/lib/aarch64-linux-gnu/libstdc++.so.6.0.32`. And gcc 7.5 has only `libstdc++.so.6.0.32`, so the compiled binary will thrown an error. Just copying this library and updating the link leads to a crash shortly after starting the CUDA part, don't why yet. It is useful for test purposes. And gcc 8.5 uses the same updated library, probably since the release dates of 8.5 (May 14, 2021) and 9.4 (June 1, 2021) are close to one another. So 9.4 is good for fast testing, 8.5 better for long term compatibility.
 
 ### GCC 8.4
 
-This compiler version 8.4 from March 4, 2020 can be installed in the same fast fashion as the mentioned 9.4 above. Just replace three lines:
+This compiler version 8.4 from March 4, 2020 can be installed in the same fast fashion as the mentioned 9.4 above. Will run 24 seconds, with all steps 2 minutes. Just replace three lines:
 
 ``` sh
 sudo apt install gcc-8 g++-8 -y
@@ -555,6 +553,13 @@ sudo make install
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/local/bin/gcc 100
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/local/bin/g++ 100
 ```
+
+| version | release    | libstdc++ | GLIBCXX |
+|---------|------------|-----------|---------|
+| 7.5.0   | 2019-11-14 | 6.0.25    | 3.4.25  |
+| 8.4.0   | 2020-03-04 | 6.0.25    | 3.4.25  |
+| 8.5.0   | 2021-05-14 |           |         |
+| 9.4.0   | 2021-06-01 |           |         |
 
 ## History
 
