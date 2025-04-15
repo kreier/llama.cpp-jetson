@@ -185,7 +185,7 @@ We need to add a few extra flags to the recommended first instruction `cmake -B 
 cmake -B build -DGGML_CUDA=ON -DLLAMA_CURL=ON -DCMAKE_CUDA_STANDARD=14 -DCMAKE_CUDA_STANDARD_REQUIRED=true -DGGML_CPU_ARM_ARCH=armv8-a -DGGML_NATIVE=off
 ```
 
-And 15 seconds later we're ready for the last step, the instruction that will take **85 minutes** to have llama.cpp compiled:
+And 15 seconds later we're ready for the last step, the instruction that will take **85 minutes** (faster SD card: 60 minutes) to have llama.cpp compiled:
 
 ``` sh
 cmake --build build --config Release
@@ -440,14 +440,14 @@ export LD_LIBRARY_PATH=/usr/local/cuda/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PAT
 
 As best practice you can add these to the end of your *.bashrc* with `nano .bashrc`.
 
-### Update the system - could be skipped?
+### Update the system - can be skipped
 
-Usually I updated the system and the installed packages to the latest available versions, and currently that's about 348 packages. Without the upgrade your system states:
+I tested this, and you can skip this step and 2 hours, the procedure works well with the provided older packages. Usually I updated the system and the installed packages to the latest available versions, and with a vanilla image currently about 348 packages have to be updated. Without the upgrade your system states:
 
 - JetPack 4.6.1 (32.7.1-20220219090432) - `dpkg-query --show nvidia-l4t-core`
 - kernel Linux nano 4.9.253-tegra from February 19, 2022 - `uname -a`
 
-The upgrade will take several hours. I'll test in the future if that is actually necessary to compile llama.cpp. And stop the time. It is not necessary to run the compiled version of llama.cpp b5050 available [here](https://github.com/kreier/llama.cpp-jetson.nano).
+The upgrade will take several hours. I tested and it is actually not necessary to **upgrade** to compile llama.cpp. And it is not necessary to run the compiled version of llama.cpp b5050 available [here](https://github.com/kreier/llama.cpp-jetson.nano).
 
 ``` sh
 sudo apt update
@@ -513,7 +513,7 @@ Yet versions 9 and higher are not compatible with `nvcc 10.2` and show `error: #
 #endif /* __GNUC__ > 8 */ 
 ```
 
-You can edit his line. Change **8** to a **9** with `sudo nano /usr/local/cuda/targets/aarch64-linux/include/crt/host_config.h` in line 136. The compilation is the same as with 8.5 afterwards, and the installation is much faster, just 4 minutes instead of 3 hours! The created files rely on `/usr/lib/aarch64-linux-gnu/libstdc++.so.6` being linked to `/usr/lib/aarch64-linux-gnu/libstdc++.so.6.0.32`. And gcc 7.5 has only `libstdc++.so.6.0.32`, so the compiled binary will thrown an error. Just copying this library and updating the link leads to a crash shortly after starting the CUDA part, don't why yet. It is useful for test purposes. And gcc 8.5 uses the same updated library, probably since the release dates of 8.5 (May 14, 2021) and 9.4 (June 1, 2021) are close to one another. So 9.4 is good for fast testing, 8.5 better for long term compatibility.
+You can edit this line. Change **8** to a **9** with `sudo nano /usr/local/cuda/targets/aarch64-linux/include/crt/host_config.h` in line 136. Then the compilation is the same as with 8.5, and the installation is much faster, just 4 minutes instead of 3 hours! The created files rely on the library `/usr/lib/aarch64-linux-gnu/libstdc++.so.6` being linked to `/usr/lib/aarch64-linux-gnu/libstdc++.so.6.0.32`. But gcc 7.5 has only `libstdc++.so.6.0.25`, so the compiled binary will thrown an error if running on a system with only gcc 7.5. Just copying this library and updating the link leads to a crash shortly after starting the CUDA part, don't know why yet. But gcc 9.4 is useful for test purposes. Version gcc 8.5 uses the older library 6.0.25 that is shipped with gcc 7.5. So 9.4 is good for fast testing, 8.5 better for long term compatibility.
 
 ### GCC 8.4
 
@@ -559,12 +559,15 @@ sudo update-alternatives --install /usr/bin/g++ g++ /usr/local/bin/g++ 100
 | 7.5.0   | 2019-11-14 | 6.0.25    | 3.4.25  |                        |
 | 8.4.0   | 2020-03-04 | 6.0.25    | 3.4.25  |                        |
 | 8.5.0   | 2021-05-14 | 6.0.25    | 3.4.25  | ~/8/3.4.25             |
-| 9.4.0   | 2021-06-01 |           |         |                        |
+| 9.4.0   | 2021-06-01 | 6.0.32    | 3.4.32  | ~/9/3.4.32             |
 | 13.3.0  | 2024-05-21 | 6.0.33    | 3.4.33  | ~/13/3.4.33            |
 
 - GCC versions: [https://gcc.gnu.org/releases.html](https://gcc.gnu.org/releases.html)
 - `ll /usr/lib/aarch64-linux-gnu/libstd*`
 - `strings /usr/lib/aarch64-linux-gnu/libstdc++.so.6 | grep GLIBCXX`
+- `strings /usr/lib/gcc/aarch64-linux-gnu/7/libstdc++.so | grep GLIBCXX`
+- `strings /usr/lib/gcc/aarch64-linux-gnu/8/libstdc++.so | grep GLIBCXX`
+- `strings /usr/lib/gcc/aarch64-linux-gnu/9/libstdc++.so | grep GLIBCXX`
 
 
 ## History
