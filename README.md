@@ -347,7 +347,7 @@ You see in the left graph that the token generation with GPU is slightly faster 
 
 Another parameter affecting the speed of generating an answer is the number of layers exported to the GPU with `--n-gpu-layers 99`. In this case the **prompt processing** is largely unaffected, while it **more than doubles** the speed of the **token generation** - even with the unified memory of the Jetson Nano. A CPU compile as only `4.27` in token generation:
 
-<img src="docs/gemma3_b5050_pp.svg" width="49%"><img src="docs/gemma3_b5050_tg.svg" width="49%">
+<img src="docs/gemma3_b5135_pp.svg" width="49%"><img src="docs/gemma3_b5135_tg.svg" width="49%">
 
 #### Reason for GPU 20% faster than CPU
 
