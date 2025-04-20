@@ -347,8 +347,44 @@ Another parameter affecting the speed of generating an answer is the number of l
 
 <img src="docs/gemma3_b5050_pp.svg" width="49%"><img src="docs/gemma3_b5050_tg.svg" width="49%">
 
+#### Reason for GPU 20% faster than CPU
 
+Since inference speed is usually limited by the memory bandwidth (known as "latency bottleneck") it is surprizing to see some increased speed for the use of the GPU on the shared 4GB LPDDR4 memory with a theoretical speed of **25.60 GB/s**. With the CPU I get only 26% or **6.7 GB/s**:
 
+``` sh
+mk@jetson:~$ sysbench memory --memory-block-size=32m run
+sysbench 1.0.11 (using system LuaJIT 2.1.0-beta3)
+68903.00 MiB transferred (6887.13 MiB/sec)
+```
+
+The memory access for the GPU seems to be 2.4x faster with **16.5 GB/s** or 64% of the theoretical maximum. Maybe a feature of the MMU? The result is from a compiled `bandwidthTest` in the sample folder:
+
+``` sh
+mk@nano:/usr/local/cuda/samples/1_Utilities/bandwidthTest$ ./bandwidthTest
+[CUDA Bandwidth Test] - Starting...
+Running on...
+ Device 0: NVIDIA Tegra X1
+ Quick Mode
+
+ Host to Device Bandwidth, 1 Device(s)
+ PINNED Memory Transfers
+   Transfer Size (Bytes)        Bandwidth(GB/s)
+   32000000                     7.1
+
+ Device to Host Bandwidth, 1 Device(s)
+ PINNED Memory Transfers
+   Transfer Size (Bytes)        Bandwidth(GB/s)
+   32000000                     10.3
+
+ Device to Device Bandwidth, 1 Device(s)
+ PINNED Memory Transfers
+   Transfer Size (Bytes)        Bandwidth(GB/s)
+   32000000                     16.5
+
+Result = PASS
+
+NOTE: The CUDA Samples are not meant for performance measurements. Results may vary when GPU Boost is enabled.
+```
 
 
 ### B3: Gemma3:4b
