@@ -1,4 +1,6 @@
-# Jetson Nano with current llama.cpp and CUDA support
+# Llama.cpp with CUDA support on a Jetson Nano
+
+<a href="https://github.com/ggml-org/llama.cpp"><img src="https://kreier.github.io/llama.cpp-jetson.nano/docs/llama.png" width="25%" align="right"></a>
 
 ![GitHub Release](https://img.shields.io/github/v/release/kreier/llama.cpp-jetson)
 ![GitHub License](https://img.shields.io/github/license/kreier/llama.cpp-jetson)
@@ -26,7 +28,7 @@ And the Jetson Nano indeed ([footnote 1](#footnotes)) uses its GPU to generate t
 
 ## Prerequisites
 
-You will need the following software packages installed. The section "[Install prerequisites](https://gist.github.com/kreier/6871691130ec3ab907dd2815f9313c5d#install-prerequisites)" describes the process in detail. The installation of `gcc 8.5` and `cmake 3.27` of these might take several hours.
+You will need the following software packages installed. The section "[Install prerequisites](#install-prerequisites)" describes the process in detail. The installation of `gcc 8.5` and `cmake 3.27` of these might take several hours.
 
 - Nvidia CUDA Compiler nvcc 10.2 - `nvcc --version`
 - GCC and CXX (g++) 8.5 - `gcc --version`
@@ -467,7 +469,7 @@ A copy of [TinyLlama](https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-G
 
 ## Install prerequisites
 
-The [latest image from Nvidia](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#write) for the 2019 Jetson Nano contains a ubuntu 18.04 LTS distribution with a kernel *Kernel GNU/Linux 4.9.201-tegra*, the *GNU Compiler Collection 7.5.0 (G++ 7.5.0) from 2019*, the *NVIDIA Cuda Compiler nvcc 10.3.200* and has *Jetpack 4.6.1-b110* (check with `sudo apt-cache show nvidia-jetpack`) installed. If `nvcc --version` does not confirm the installed Cuda Compiler you need to update the links with
+The [latest image from Nvidia](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#write) for the 2019 Jetson Nano contains a ubuntu 18.04 LTS distribution with a kernel *Kernel GNU/Linux 4.9.201-tegra*, the *GNU Compiler Collection 7.5.0 (G++ 7.5.0) from 2019*, the *NVIDIA Cuda Compiler nvcc 10.3.200* and has *Jetpack 4.6.1-b110* (check with `sudo apt-cache show nvidia-jetpack`) installed. If `nvcc --version` does not confirm the installed Cuda Compiler you need to update the links with this automated script: `curl -fsSL https://kreier.github.io/jetson/fix/cuda-path.sh | bash && source ~/.bashrc` or manually with these two lines:
 
 ``` sh
 export PATH=/usr/local/cuda/bin${PATH:+:${PATH}}
