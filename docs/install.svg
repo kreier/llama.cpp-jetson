@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 600 150" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <path d="M592.724,42.257L592.724,111.101C592.724,130.099 577.3,145.522 558.302,145.522L40.578,145.522C21.581,145.522 6.157,130.099 6.157,111.101L6.157,42.257C6.157,23.26 21.581,7.836 40.578,7.836L558.302,7.836C577.3,7.836 592.724,23.26 592.724,42.257Z" style="fill:url(#_Linear1);stroke:rgb(34,146,49);stroke-width:3.42px;"/>
+    <g transform="matrix(1.50366,0,0,1.50366,21.6091,-14.0651)">
+        <text x="37.5px" y="88.433px" style="font-family:'BerlinSansFBDemi-Bold', 'Berlin Sans FB Demi', sans-serif;font-weight:700;font-size:85.169px;fill:white;">Install</text>
+        <text x="290.513px" y="88.433px" style="font-family:'MS-UIGothic', 'MS UI Gothic', sans-serif;font-size:85.169px;fill:white;">⇩</text>
+    </g>
+    <defs>
+        <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-2.23881,148.321,-34.8158,-0.525521,298.881,3.91791)"><stop offset="0" style="stop-color:rgb(63,179,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(5,83,0);stop-opacity:1"/></linearGradient>
+    </defs>
+</svg>

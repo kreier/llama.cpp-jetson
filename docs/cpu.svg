@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 500 500" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(6.05039,0,0,6.05039,-1262.6,-1028.65)">
+        <g id="OBJECTS">
+            <g>
+                <g>
+                    <rect x="218.375" y="179.833" width="63.333" height="63.333" style="fill:rgb(0,137,59);"/>
+                    <rect x="227.042" y="188.5" width="46" height="46" style="fill:rgb(43,70,77);"/>
+                    <g>
+                        <rect x="210.333" y="198.375" width="16.667" height="2.667" style="fill:rgb(255,191,11);"/>
+                        <rect x="210.333" y="206.458" width="16.667" height="2.667" style="fill:rgb(255,191,11);"/>
+                        <rect x="210.333" y="214.542" width="16.667" height="2.667" style="fill:rgb(255,191,11);"/>
+                        <rect x="210.333" y="222.625" width="16.667" height="2.667" style="fill:rgb(255,191,11);"/>
+                    </g>
+                    <g>
+                        <g transform="matrix(-1,-1.22465e-16,1.22465e-16,-1,562.667,399.417)">
+                            <rect x="273" y="198.375" width="16.667" height="2.667" style="fill:rgb(255,191,11);"/>
+                        </g>
+                        <g transform="matrix(-1,-1.22465e-16,1.22465e-16,-1,562.667,415.583)">
+                            <rect x="273" y="206.458" width="16.667" height="2.667" style="fill:rgb(255,191,11);"/>
+                        </g>
+                        <g transform="matrix(-1,-1.22465e-16,1.22465e-16,-1,562.667,431.75)">
+                            <rect x="273" y="214.542" width="16.667" height="2.667" style="fill:rgb(255,191,11);"/>
+                        </g>
+                        <g transform="matrix(-1,-1.22465e-16,1.22465e-16,-1,562.667,447.917)">
+                            <rect x="273" y="222.625" width="16.667" height="2.667" style="fill:rgb(255,191,11);"/>
+                        </g>
+                    </g>
+                    <g>
+                        <g transform="matrix(6.12323e-17,-1,1,6.12323e-17,82.4583,442.458)">
+                            <rect x="254.125" y="178.667" width="16.667" height="2.667" style="fill:rgb(255,191,11);"/>
+                        </g>
+                        <g transform="matrix(6.12323e-17,-1,1,6.12323e-17,74.375,434.375)">
+                            <rect x="246.042" y="178.667" width="16.667" height="2.667" style="fill:rgb(255,191,11);"/>
+                        </g>
+                        <g transform="matrix(6.12323e-17,-1,1,6.12323e-17,66.2916,426.292)">
+                            <rect x="237.958" y="178.667" width="16.667" height="2.667" style="fill:rgb(255,191,11);"/>
+                        </g>
+                        <g transform="matrix(6.12323e-17,-1,1,6.12323e-17,58.2083,418.208)">
+                            <rect x="229.875" y="178.667" width="16.667" height="2.667" style="fill:rgb(255,191,11);"/>
+                        </g>
+                    </g>
+                    <g>
+                        <g transform="matrix(6.12323e-17,-1,1,6.12323e-17,19.7917,505.125)">
+                            <rect x="254.125" y="241.333" width="16.667" height="2.667" style="fill:rgb(255,191,11);"/>
+                        </g>
+                        <g transform="matrix(6.12323e-17,-1,1,6.12323e-17,11.7083,497.042)">
+                            <rect x="246.042" y="241.333" width="16.667" height="2.667" style="fill:rgb(255,191,11);"/>
+                        </g>
+                        <g transform="matrix(6.12323e-17,-1,1,6.12323e-17,3.625,488.958)">
+                            <rect x="237.958" y="241.333" width="16.667" height="2.667" style="fill:rgb(255,191,11);"/>
+                        </g>
+                        <g transform="matrix(6.12323e-17,-1,1,6.12323e-17,-4.4583,480.875)">
+                            <rect x="229.875" y="241.333" width="16.667" height="2.667" style="fill:rgb(255,191,11);"/>
+                        </g>
+                    </g>
+                    <g transform="matrix(1,0,0,1,232.708,227.333)">
+                        <text x="0px" y="0px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:9px;fill:white;">CPU</text>
+                    </g>
+                </g>
+                <rect x="232.375" y="192.833" width="4.667" height="2.542" style="fill:white;"/>
+                <rect x="239.708" y="192.833" width="17.708" height="2.542" style="fill:white;"/>
+            </g>
+        </g>
+    </g>
+    <g id="DESIGNED_BY_FREEPIK">
+    </g>
+</svg>
