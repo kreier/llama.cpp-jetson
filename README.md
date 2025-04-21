@@ -259,7 +259,7 @@ As expected, the prompt processing is even further accelerated, since it is very
 
 
 
-
+<img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="20%"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/gemma3logo.png" width="60%">
 
 ### B2: Gemma3:1b 2025-03-12
 
