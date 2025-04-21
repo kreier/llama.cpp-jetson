@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 500 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(0.92235,0,0,0.92235,3.51689,26.3823)">
+        <g transform="matrix(0.9757,0,0,1,0.498159,0)">
+            <text x="20.5px" y="38.461px" style="font-family:'Alef-Bold', 'Alef';font-weight:700;font-size:32.658px;fill:url(#_Linear1);">1. <tspan x="69.487px " y="38.461px ">U</tspan>pdate</text>
+        </g>
+        <g transform="matrix(0.9757,0,0,1,4.62977,0)">
+            <text x="190.525px" y="38.461px" style="font-family:'Consolas-Bold', 'Consolas', monospace;font-weight:700;font-size:32.658px;fill:url(#_Linear2);">$PATH</text>
+        </g>
+        <g transform="matrix(0.9757,0,0,1,0.498159,0)">
+            <text x="20.5px" y="72.624px" style="font-family:'Alef-Bold', 'Alef';font-weight:700;font-size:32.658px;fill:url(#_Linear3);">2. <tspan x="69.487px " y="72.624px ">A</tspan>dditional packages like</text>
+        </g>
+        <g transform="matrix(0.9757,0,0,1,10.9792,0)">
+            <text x="451.817px" y="72.624px" style="font-family:'Consolas-Bold', 'Consolas', monospace;font-weight:700;font-size:32.658px;fill:url(#_Linear4);">jtop</text>
+        </g>
+        <g transform="matrix(0.9757,0,0,1,0.498159,0)">
+            <text x="20.5px" y="106.788px" style="font-family:'Alef-Bold', 'Alef';font-weight:700;font-size:32.658px;fill:url(#_Linear5);">3. <tspan x="69.487px " y="106.788px ">I</tspan>nstall</text>
+        </g>
+        <g transform="matrix(0.9757,0,0,1,4.1878,0)">
+            <text x="172.337px" y="106.788px" style="font-family:'Consolas-Bold', 'Consolas', monospace;font-weight:700;font-size:32.658px;fill:url(#_Linear6);">cmake</text>
+        </g>
+        <g transform="matrix(0.9757,0,0,1,6.31637,0)">
+            <text x="269.022px" y="106.788px" style="font-family:'Alef-Bold', 'Alef';font-weight:700;font-size:32.658px;fill:url(#_Linear7);">3.27</text>
+        </g>
+        <g transform="matrix(0.9757,0,0,1,0.498159,0)">
+            <g transform="matrix(32.6577,0,0,32.6577,357.474,140.951)">
+            </g>
+            <text x="20.5px" y="140.951px" style="font-family:'Alef-Bold', 'Alef';font-weight:700;font-size:32.658px;fill:url(#_Linear8);">4. <tspan x="69.487px " y="140.951px ">C</tspan>ompile GCC 8.5.0</text>
+        </g>
+    </g>
+    <defs>
+        <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(272.585,213.974,-219.303,265.961,102.917,-11.5381)"><stop offset="0" style="stop-color:rgb(41,66,255);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(255,103,234);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear2" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(272.585,213.974,-219.303,265.961,98.6821,-11.5381)"><stop offset="0" style="stop-color:rgb(41,66,255);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(255,103,234);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear3" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(272.585,213.974,-219.303,265.961,102.917,-11.5381)"><stop offset="0" style="stop-color:rgb(41,66,255);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(255,103,234);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear4" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(272.585,213.974,-219.303,265.961,92.1746,-11.5381)"><stop offset="0" style="stop-color:rgb(41,66,255);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(255,103,234);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear5" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(272.585,213.974,-219.303,265.961,102.917,-11.5381)"><stop offset="0" style="stop-color:rgb(41,66,255);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(255,103,234);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear6" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(272.585,213.974,-219.303,265.961,99.1351,-11.5381)"><stop offset="0" style="stop-color:rgb(41,66,255);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(255,103,234);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear7" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(272.585,213.974,-219.303,265.961,96.9535,-11.5381)"><stop offset="0" style="stop-color:rgb(41,66,255);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(255,103,234);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear8" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(272.585,213.974,-219.303,265.961,102.917,-11.5381)"><stop offset="0" style="stop-color:rgb(41,66,255);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(255,103,234);stop-opacity:1"/></linearGradient>
+    </defs>
+</svg>
