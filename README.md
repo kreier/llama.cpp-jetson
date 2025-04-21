@@ -259,7 +259,7 @@ As expected, the prompt processing is even further accelerated, since it is very
 
 
 
-<img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="20%"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/gemma3logo.png" width="60%">
+<img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="30%"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/gemma3logo.png" width="40%">
 
 ### B2: Gemma3:1b 2025-03-12
 
@@ -430,7 +430,7 @@ With llama.cpp I tried to offload all 37 layers to the GPU, but it only worked f
 
 
 
-
+<img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="40%" height="1px"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/cpu.svg" width="20%">
 
 ## Compile llama.cpp for CPU mode
 
@@ -450,15 +450,20 @@ After finishing the compilation its time for the first model and AI chat:
 ```
 
 
+
+
+
+<img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="35%" height="1px"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/install.svg" width="30%">
+
 ## Install build 5050
 
 The fastest way to get llama.cpp with CUDA support running is installing the compiled files with this script in 44 seconds from [this repository](https://github.com/kreier/llama.cpp-jetson.nano):
 
 ``` sh
-curl -fsSL https://kreier.github.io/llama.cpp-jetson.nano/install.sh | sh
+curl -fsSL https://kreier.github.io/llama.cpp-jetson.nano/install.sh | bash && source ~/.bashrc
 ```
 
-The first start with Gemma3 will take **almost 7 minutes** after `main: load model the model and apply lora adapter, if any`, but later runs start in less than 10 seconds:
+The first start with Gemma3 will take **almost 7 minutes** after `main: load model the model and apply lora adapter, if any`, but later runs start in **12 seconds**:
 
 ``` sh
 llama-cli -hf ggml-org/gemma-3-1b-it-GGUF --n-gpu-layers 99
@@ -466,7 +471,13 @@ llama-cli -hf ggml-org/gemma-3-1b-it-GGUF --n-gpu-layers 99
 
 A copy of [TinyLlama](https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF) has the same **6:30 min** startup pause at the `main: load model the model and apply lora adapter, if any` step. It can be started with `llama-cli -hf kreier/tiny`. 
 
+If you downloaded Gemma3:1b with `llama-cli -hf kreier/gemma3-1b` you can start your webserver with `llama-server -m ~/.cache/llama.cpp/kreier_gemma3-1b_gemma3-1b.gguf --host 0.0.0.0 --n-gpu-layers 99`.
 
+
+
+
+
+<img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="30%" height="1px"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/prerequesites.svg" width="40%">
 
 ## Install prerequisites
 
@@ -511,6 +522,10 @@ sudo apt update
 sudo apt install nano curl libcurl4-openssl-dev python3-pip
 pip3 -H install -U jetson-stats
 ```
+
+The last one `jetson-stats` can be called later as `jtop`.
+
+<img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="30%" height="1px"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/llama5038gpu.png" width="40%">
 
 ### Install `cmake >= 3.14`
 
@@ -592,6 +607,10 @@ sudo make install
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/local/bin/gcc 100
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/local/bin/g++ 100
 ```
+
+#### Library libstdc++ updated with gcc 9.x
+
+Code compiled with gcc 8.5 runs without a problem on systems only having gcc 7.5 installed (default for the Ubuntu 18.04.6 LTS image provided by Nvidia) since the standard library `libstdc++` is version 6.0.25 for both. It is only updated for the 9.x version of gcc, and then compiled binaries throw an error.
 
 | version | release    | libstdc++ | GLIBCXX | /usr/lib/gcc/~/version |
 |---------|------------|-----------|---------|------------------------|
