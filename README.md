@@ -11,6 +11,11 @@ It is possible to compile a recent llama.cpp with GPU support, using `gcc 8.5` a
 - [Prerequisites](#prerequisites)
 - [Procedure](#procedure) - 5 minutes, plus 85 minutes for the compilation in the last step
 - [Benchmark](#benchmark)
+  - [B1: TinyLlama-1.1-Chat](#b1-tinyllama-11b-chat-2023-12-31)
+  - [B2: Gemma3:1b](#b2-gemma31b-2025-03-12)
+  - [Variance in PP (prompt processing) when using the GPU](#explaining-the-variance-in-prompt-processing-when-using-the-gpu)
+  - [B3: Gemma3:4b](#b3-gemma34b)
+  - [Running ollama and llama-server at the same time](#running-ollama-and-llama-server-at-the-same-time)
 - [Compile llama.cpp for CPU mode](#compile-llamacpp-for-cpu-mode) - 24 minutes
 - [Install build 5050](#install-build-5050) - 1 minute, first start needs extra 6:30 min (later 12 seconds)
 - [Install prerequisites](#install-prerequisites)
@@ -423,8 +428,34 @@ With llama.cpp I tried to offload all 37 layers to the GPU, but it only worked f
 | 4b:latest |     --    |     --    |   --   |   --   |  20.51 |  12.69 |  75.67 |  90.25 |
 | machine   | llama.cpp | llama.cpp | Jetson | Jetson | 13700T | 13700T | 3060Ti | 3060Ti |
 
+### Running ollama and llama-server at the same time
 
+With the compiled CUDA version of llama.cpp we can now run `./llama5135.cpp/build/bin/llama-server -m ~/.cache/llama.cpp/kreier_gemma3-1b_gemma3-1b.gguf -ngl 99 --host 0.0.0.0` with 4.7 t/s and `ollama run --verbose gemma3:1b` with 3.9 token/s at the same time:
 
+![Ollama and llama-server](docs/ollama+llama.cpp.png)
+
+``` sh
+**What do you think? Would you like me to:**
+
+*   Write another story?
+*   Expand on a particular part of this story?
+*   Suggest a genre (e.g., mystery, fantasy)?
+
+total duration:       3m43.341644716s
+load duration:        453.781209ms
+prompt eval count:    13 token(s)
+prompt eval duration: 1.894296054s
+prompt eval rate:     6.86 tokens/s
+eval count:           854 token(s)
+eval duration:        3m40.892523137s
+eval rate:            3.87 tokens/s
+>>> /bye
+mk@nano:~$ ollama ps
+NAME         ID              SIZE      PROCESSOR    UNTIL
+gemma3:1b    8648f39daa8f    854 MB    100% CPU     53 seconds from now
+```
+
+Without `llama-server` running the background `ollama` is only slightly faster with 4.49 t/s (16% faster). The independent systems for CPU and GPU therefore don't slow down one another very much, even though using the same unified memory.
 
 
 
