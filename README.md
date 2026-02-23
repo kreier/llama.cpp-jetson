@@ -16,6 +16,7 @@ It is possible to compile a recent llama.cpp with GPU support, using `gcc 8.5` a
   - [Variance in PP (prompt processing) when using the GPU](#explaining-the-variance-in-prompt-processing-when-using-the-gpu)
   - [B3: Gemma3:4b](#b3-gemma34b)
   - [Running ollama and llama-server at the same time](#running-ollama-and-llama-server-at-the-same-time)
+  - [B4: LFM2.5-1.2B-Thinking](#b4-lfm25-12b-thinking)
 - [Compile llama.cpp for CPU mode](#compile-llamacpp-for-cpu-mode) - 24 minutes
 - [Install build 5050](#install-build-5050) - 1 minute, first start needs extra 6:30 min (later 12 seconds)
 - [Install prerequisites](#install-prerequisites)
@@ -457,8 +458,17 @@ gemma3:1b    8648f39daa8f    854 MB    100% CPU     53 seconds from now
 
 Without `llama-server` running the background `ollama` is only slightly faster with 4.49 t/s (16% faster). The independent systems for CPU and GPU therefore don't slow down one another very much, even though using the same unified memory.
 
+![Liquid](docs/liquid.png)
 
+### B4: LFM2.5-1.2B-Thinking
 
+A little later in 2025 a new sub-2B model arrived that significantly outperformed both Gemma3:1b and Llama3.2:1B Instruct. But it's not supported by `b5050` yet. Can we build a newer llama.cpp and get a smarter agent? The use cases for bfloat16 increase ...
+
+Look here on ollama: [https://ollama.com/library/lfm2.5-thinking](https://ollama.com/library/lfm2.5-thinking)
+
+- Latest update: January 20, 2026.
+- 588k downloads on ollama.com
+- 47k downloads on Huggingface: [https://huggingface.co/LiquidAI/LFM2.5-1.2B-Thinking](https://huggingface.co/LiquidAI/LFM2.5-1.2B-Thinking)
 
 
 <img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/1x1.png" width="40%" height="1px"><img src="https://raw.githubusercontent.com/kreier/llama.cpp-jetson/main/docs/cpu.svg" width="20%">
